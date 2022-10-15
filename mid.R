@@ -9,7 +9,11 @@ library(tidyverse)
 library(lubridate)
 library(gridExtra)
 # Read in dataset
-data = read.csv('https://raw.githubusercontent.com/xauuu/mid-term-r/main/sales.csv', header = T, na.strings = '')
+data = read.csv(
+  'https://raw.githubusercontent.com/xauuu/mid-term-r/main/sales.csv',
+  header = T,
+  na.strings = ''
+)
 names(data)
 dim(data)
 ## đổi tên cột sang chữ thường
@@ -33,14 +37,6 @@ table(data$customer_type)
 table(data$gender)
 table(data$product)
 table(data$payment)
-
-#type conversion
-#data$branch <- as.factor(data$branch)
-#data$customer_type <- as.factor(data$customer_type)
-#data$gender <- as.factor(data$gender)
-#data$city <- as.factor(data$city)
-#data$product <- as.factor(data$product)
-#data$payment <- as.factor(data$payment)
 
 # thay đổi cột ngày sang kiểu Date
 data$date <- as.Date(data$date, "%m/%d/%y")
@@ -80,7 +76,15 @@ data_omit$weekday <- factor(
   )
 )
 
-View(data_omit)
+mean_rating <- mean(data$rating)
+data_omit$satisfaction_level <-
+  ifelse(
+    data_omit$rating > mean_rating + 1,
+    "Very Satisfied",
+    ifelse(data_omit$rating < mean_rating - 1,
+           "Not Satisfied",
+           "Neutral")
+  )
 
 # Chi nhánh nào có doanh số cao nhất?
 sales_by_store <- data_omit %>%
@@ -129,6 +133,18 @@ pmt_method <- data %>%
   count()
 pmt_method
 
-pie(pmt_method$n,
-    labels = c("Cash", "Credit Card", "E-wallet"),
-    main = "Breakdown of Payment Methods")
+x <- pmt_method$n
+piepercent <- round(100 * x / sum(x), 1)
+pie(x,
+    labels = paste0(piepercent, "%"),
+    main = "Breakdown of Payment Methods",
+    col = rainbow(length(x)))
+legend(
+  "topleft",
+  c("Cash", "Credit Card", "E-wallet"),
+  cex = 0.8,
+  fill = rainbow(length(x))
+)
+
+date <- data %>% group_by(date) %>% summarize(sum = sum(total))
+date %>% ggplot(aes(x = date, y = sum)) + geom_line(color="red")
