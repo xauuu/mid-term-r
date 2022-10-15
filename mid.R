@@ -52,22 +52,22 @@ colSums(is.na(data))
 # Loại bỏ NA
 data_omit <- na.omit(data)
 colSums(is.na(data_omit))
-
+dim(data_omit)
 # tạo các cột mới cho năm, tháng và ngày
-data$year <- format(as.Date(data$date), "%Y")
-data$month <- format(as.Date(data$date), "%m")
-data$day <- format(as.Date(data$date), "%d")
+data_omit$year <- format(as.Date(data_omit$date), "%Y")
+data_omit$month <- format(as.Date(data_omit$date), "%m")
+data_omit$day <- format(as.Date(data_omit$date), "%d")
 
 
-data$month_name <-
+data_omit$month_name <-
   factor(
-    as.numeric(data$month),
+    as.numeric(data_omit$month),
     levels = c(1, 2, 3),
     labels = c("January", "February", "March")
   )
 
-data$weekday <- factor(
-  wday(data$date, week_start = 1),
+data_omit$weekday <- factor(
+  wday(data_omit$date, week_start = 1),
   levels = c(1, 2, 3, 4, 5, 6, 7),
   labels = c(
     "Monday",
@@ -80,8 +80,10 @@ data$weekday <- factor(
   )
 )
 
+View(data_omit)
+
 # Chi nhánh nào có doanh số cao nhất?
-sales_by_store <- data %>%
+sales_by_store <- data_omit %>%
   group_by(branch) %>%
   summarize(total_sales = sum(total))
 #x <- group_by(data, branch)
@@ -100,7 +102,7 @@ sales_by_store %>%
   )
 
 # Chi nhánh nào có doanh số cao nhất theo tháng?
-sales_by_store_month <- data %>%
+sales_by_store_month <- data_omit %>%
   group_by(branch, month) %>%
   summarize(total_sales = sum(total))
 
