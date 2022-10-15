@@ -9,7 +9,7 @@ library(tidyverse)
 library(lubridate)
 library(gridExtra)
 # Read in dataset
-data = read.csv('sales.csv', header = T, na.strings = '')
+data = read.csv('https://raw.githubusercontent.com/xauuu/mid-term-r/main/sales.csv', header = T, na.strings = '')
 names(data)
 dim(data)
 ## đổi tên cột sang chữ thường
