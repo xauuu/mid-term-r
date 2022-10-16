@@ -157,5 +157,5 @@ legend(
   fill = rainbow(length(x))
 )
 # thống kê thu nhập theo từng ngày
-date <- data %>% group_by(date) %>% summarize(sum = sum(total))
+date <- data_omit %>% group_by(date) %>% summarize(sum = sum(total))
 date %>% ggplot(aes(x = date, y = sum)) + geom_line(color="red")
