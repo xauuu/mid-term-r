@@ -1,3 +1,8 @@
+# Nhóm 11
+## Nguyễn Văn An - 19IT001
+## Trần Quang Đạt - 19IT006
+## Ngô Thị Hương Giang - 19IT008
+
 #install.packages("dplyr")
 #install.packages("tidyverse")
 #install.packages("lubridate")
@@ -43,18 +48,23 @@ data$date <- as.Date(data$date, "%m/%d/%y")
 
 str(data)
 
+# kiểm tra số lương NA của dữ liệu
 colSums(is.na(data))
 
 # Loại bỏ NA
 data_omit <- na.omit(data)
 colSums(is.na(data_omit))
 dim(data_omit)
+
+# tạo cột total dựa trên số lượng và giá sp
+data_omit$total <- data_omit$unit_price * data_omit$quantity
+
 # tạo các cột mới cho năm, tháng và ngày
 data_omit$year <- format(as.Date(data_omit$date), "%Y")
 data_omit$month <- format(as.Date(data_omit$date), "%m")
 data_omit$day <- format(as.Date(data_omit$date), "%d")
 
-
+# Tạo cột tên tháng
 data_omit$month_name <-
   factor(
     as.numeric(data_omit$month),
@@ -62,6 +72,7 @@ data_omit$month_name <-
     labels = c("January", "February", "March")
   )
 
+# Tạo cột thứ
 data_omit$weekday <- factor(
   wday(data_omit$date, week_start = 1),
   levels = c(1, 2, 3, 4, 5, 6, 7),
@@ -76,7 +87,8 @@ data_omit$weekday <- factor(
   )
 )
 
-mean_rating <- mean(data$rating)
+# Tạo cột độ hài lòng của khách hàng
+mean_rating <- mean(data$rating) # tính trung bình đánh giá
 data_omit$satisfaction_level <-
   ifelse(
     data_omit$rating > mean_rating + 1,
@@ -93,7 +105,6 @@ sales_by_store <- data_omit %>%
 #x <- group_by(data, branch)
 #sales_by_store <- summarize(x, t = sum(total))
 #sales_by_store
-print(sales_by_store)
 
 sales_by_store %>%
   ggplot(aes(x = branch, y = total_sales)) +
@@ -145,6 +156,6 @@ legend(
   cex = 0.8,
   fill = rainbow(length(x))
 )
-
+# thống kê thu nhập theo từng ngày
 date <- data %>% group_by(date) %>% summarize(sum = sum(total))
 date %>% ggplot(aes(x = date, y = sum)) + geom_line(color="red")
